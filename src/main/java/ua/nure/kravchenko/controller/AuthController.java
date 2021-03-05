@@ -2,6 +2,9 @@ package ua.nure.kravchenko.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import ua.nure.kravchenko.config.jwt.JwtProvider;
+import ua.nure.kravchenko.controller.requests_params.AuthRequest;
+import ua.nure.kravchenko.controller.requests_params.AuthResponse;
+import ua.nure.kravchenko.controller.requests_params.RegistrationRequest;
 import ua.nure.kravchenko.entity.UserEntity;
 import ua.nure.kravchenko.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

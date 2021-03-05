@@ -27,6 +27,10 @@ public class UserService {
         return userEntityRepository.save(userEntity);
     }
 
+    public UserEntity updateUser(UserEntity userEntity) {
+        return userEntityRepository.save(userEntity);
+    }
+
     public UserEntity findByLogin(String login) {
         return userEntityRepository.findByLogin(login);
     }
@@ -39,6 +43,10 @@ public class UserService {
             }
         }
         return null;
+    }
+
+    public  List<UserEntity> findListByRoleName(String roleName){
+        return userEntityRepository.findUserEntitiesByRoleEntityName(roleName);
     }
 
     public List<UserEntity> findAll(){

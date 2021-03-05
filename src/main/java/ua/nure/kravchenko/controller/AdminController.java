@@ -1,11 +1,11 @@
 package ua.nure.kravchenko.controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ua.nure.kravchenko.controller.requests_params.RequestEmail;
+import ua.nure.kravchenko.entity.RoleEntity;
 import ua.nure.kravchenko.entity.UserEntity;
+import ua.nure.kravchenko.repository.RoleEntityRepository;
 import ua.nure.kravchenko.service.UserService;
 
 import java.util.List;
@@ -15,10 +15,23 @@ import java.util.List;
 public class AdminController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private RoleEntityRepository roleEntityRepository;
 
     @GetMapping("/users")
-    public List<UserEntity> showAllEmployees(){
-        List<UserEntity> userEntities = userService.findAll();
-        return userEntities;
+    public List<UserEntity> showAllManagers(){
+        List<UserEntity> users = userService.findListByRoleName("ROLE_MANAGER");
+        return users;
+    }
+
+    @PostMapping("/users/role")
+    public UserEntity changeToManager(@RequestBody RequestEmail login){
+        UserEntity userEntity = userService.findByLogin(login.getLogin());
+        if(userEntity !=null && userEntity.getRoleEntity().getName().equals("ROLE_USER")){
+            RoleEntity roleEntity = roleEntityRepository.findByName("ROLE_MANAGER");
+            userEntity.setRoleEntity(roleEntity);
+            userService.updateUser(userEntity);
+        }
+        return userEntity;
     }
 }
