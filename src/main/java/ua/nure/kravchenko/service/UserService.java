@@ -9,10 +9,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
-
     @Autowired
     private UserEntityRepository userEntityRepository;
     @Autowired
@@ -25,6 +25,10 @@ public class UserService {
         userEntity.setRoleEntity(userRole);
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         return userEntityRepository.save(userEntity);
+    }
+
+    public Optional<UserEntity> findById(int id) {
+        return userEntityRepository.findById(id);
     }
 
     public UserEntity updateUser(UserEntity userEntity) {
@@ -45,12 +49,11 @@ public class UserService {
         return null;
     }
 
-    public  List<UserEntity> findListByRoleName(String roleName){
+    public List<UserEntity> findListByRoleName(String roleName) {
         return userEntityRepository.findUserEntitiesByRoleEntityName(roleName);
     }
 
-    public List<UserEntity> findAll(){
-        List<UserEntity> userEntities = userEntityRepository.findAll();
-        return userEntities;
+    public List<UserEntity> findAll() {
+        return userEntityRepository.findAll();
     }
 }

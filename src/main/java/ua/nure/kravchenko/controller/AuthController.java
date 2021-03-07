@@ -24,11 +24,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public UserEntity registerUser(@RequestBody @Valid RegistrationRequest registrationRequest) {
-        UserEntity u = new UserEntity();
-        u.setPassword(registrationRequest.getPassword());
-        u.setLogin(registrationRequest.getLogin());
-        userService.saveUser(u);
-        return u;
+        UserEntity user = new UserEntity();
+        user.setPassword(registrationRequest.getPassword());
+        user.setLogin(registrationRequest.getLogin());
+        userService.saveUser(user);
+        return user;
     }
 
     @PostMapping("/login")

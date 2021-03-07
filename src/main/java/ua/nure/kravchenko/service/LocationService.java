@@ -12,11 +12,19 @@ public class LocationService {
     @Autowired
     private LocationRepository locationRepository;
 
-    public List<Location> findAllById(Integer id){
+    public List<Location> findAllById(Integer id) {
         return locationRepository.findAllById(id);
     }
 
-    public Location saveLocation(Location location){
+    public Location saveLocation(Location location) {
         return locationRepository.save(location);
+    }
+
+    public Location findByAdress(String adress) {
+        return locationRepository.findByAdress(adress);
+    }
+
+    public List<Location> findAll(int id) {
+        return locationRepository.findAllById(id);
     }
 }

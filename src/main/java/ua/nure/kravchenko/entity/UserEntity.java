@@ -22,6 +22,8 @@ public class UserEntity {
     @JoinColumn(name = "role_id")
     private RoleEntity roleEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+//    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "location_id")
     private Location location;
 }
