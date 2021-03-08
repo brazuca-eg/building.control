@@ -1,5 +1,7 @@
 package ua.nure.kravchenko.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -22,8 +24,8 @@ public class UserEntity {
     @JoinColumn(name = "role_id")
     private RoleEntity roleEntity;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "location_id")
+    @ManyToOne
+    @JoinColumn (name="location_id")
+    @JsonBackReference
     private Location location;
 }

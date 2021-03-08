@@ -32,14 +32,23 @@ public class ManagerController {
         return  locationService.saveLocation(loc);
     }
 
+    @GetMapping("/location/{id}")
+    public Location getLocation(@PathVariable int id){
+        List<Location> loc = locationService.findAllById(id);
+        Location location = new Location();
+        if(loc.size()>0){
+            location = loc.get(0);
+        }
+        return location;
+    }
+
     @PostMapping("/users/{id}")
-    public String setLocationToUser(@PathVariable int id, @RequestBody LocationFindAdressReq adress){
+    public UserEntity setLocationToUser(@PathVariable int id, @RequestBody LocationFindAdressReq adress){
         Location location = locationService.findByAdress(adress.getAdress());
         UserEntity user = userService.findById(id).get();
         if(user!=null && location!=null){
             user.setLocation(location);
         }
-        userService.updateUser(user);
-        return user.getLogin();
+        return userService.updateUser(user);
     }
 }

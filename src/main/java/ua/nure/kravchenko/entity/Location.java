@@ -1,5 +1,6 @@
 package ua.nure.kravchenko.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -19,6 +20,12 @@ public class Location {
     @Column
     private double square;
 
-    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonManagedReference
     private List<UserEntity> usersInTheLocation;
+
+    public void addUser(UserEntity userEntity){
+        usersInTheLocation.add(userEntity);
+        userEntity.setLocation(this);
+    }
 }
