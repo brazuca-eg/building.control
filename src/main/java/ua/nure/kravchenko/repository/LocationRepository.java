@@ -6,10 +6,12 @@ import org.springframework.data.repository.query.Param;
 import ua.nure.kravchenko.entity.Location;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LocationRepository extends JpaRepository<Location, Integer> {
     @Query(value = "SELECT l FROM Location l WHERE  l.adress = :adress ")
     Location findByAdress(@Param("adress") String adress);
+
 
     List<Location> findAllById(Integer id);
 }

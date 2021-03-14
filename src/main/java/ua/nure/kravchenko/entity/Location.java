@@ -18,11 +18,22 @@ public class Location {
     private String adress;
 
     @Column
+    private double floor;
+
+    @Column
+    private double room;
+
+    @Column
     private double square;
 
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
     private List<UserEntity> usersInTheLocation;
+
+
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Detail> locationDetails;
 
     public void addUser(UserEntity userEntity){
         usersInTheLocation.add(userEntity);
