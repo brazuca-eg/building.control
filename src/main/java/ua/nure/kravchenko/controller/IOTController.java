@@ -10,7 +10,7 @@ import ua.nure.kravchenko.service.LocationService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/manager/detail")
+@RequestMapping("/iot")
 public class IOTController {
     @Autowired
     private DetailService detailService;
