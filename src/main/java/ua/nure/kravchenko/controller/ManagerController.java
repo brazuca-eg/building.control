@@ -6,6 +6,7 @@ import ua.nure.kravchenko.controller.requests_params.LocationFindAdressReq;
 import ua.nure.kravchenko.controller.requests_params.LocationRequest;
 import ua.nure.kravchenko.entity.Location;
 import ua.nure.kravchenko.entity.UserEntity;
+import ua.nure.kravchenko.entity.project.Statistic;
 import ua.nure.kravchenko.service.LocationService;
 import ua.nure.kravchenko.service.UserService;
 import java.util.List;
@@ -50,5 +51,12 @@ public class ManagerController {
             user.setLocation(location);
         }
         return userService.updateUser(user);
+    }
+
+    @GetMapping("/statistics/{id}")
+    public Statistic getDailyStatisticks(@PathVariable int id){
+        List<Location> locationList = locationService.findAllById(id);
+        Location location = locationList.get(0);
+        return locationService.getDailyStatisticks(location);
     }
 }
