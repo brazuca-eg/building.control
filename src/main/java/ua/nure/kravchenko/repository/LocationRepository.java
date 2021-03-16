@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface LocationRepository extends JpaRepository<Location, Integer> {
     @Query(value = "SELECT l FROM Location l WHERE  l.adress = :adress ")
-    Location findByAdress(@Param("adress") String adress);
+    Location findByAddress(@Param("adress") String adress);
 
     List<Location> findAllById(Integer id);
 }

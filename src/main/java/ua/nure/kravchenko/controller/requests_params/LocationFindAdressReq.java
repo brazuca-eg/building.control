@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class LocationFindAdressReq {
-    private String adress;
+    private String address;
 }

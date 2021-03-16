@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.nure.kravchenko.controller.requests_params.RequestEmail;
 import ua.nure.kravchenko.entity.RoleEntity;
 import ua.nure.kravchenko.entity.UserEntity;
+import ua.nure.kravchenko.entity.project.Roles;
 import ua.nure.kravchenko.repository.RoleEntityRepository;
 import ua.nure.kravchenko.service.UserService;
 
@@ -20,8 +21,7 @@ public class AdminController {
 
     @GetMapping("/users")
     public List<UserEntity> showAllManagers(){
-        List<UserEntity> users = userService.findListByRoleName("ROLE_MANAGER");
-        return users;
+        return userService.findListByRoleName(Roles.ROLE_MANAGER.getName());
     }
 
     @PostMapping("/users/role")

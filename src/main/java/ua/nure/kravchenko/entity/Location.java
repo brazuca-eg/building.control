@@ -35,6 +35,16 @@ public class Location {
     @JsonManagedReference
     private List<Detail> locationDetails;
 
+    public Location() {
+    }
+
+    public Location(String address, int floor, int room, double square) {
+        this.adress = address;
+        this.floor = floor;
+        this.room = room;
+        this.square = square;
+    }
+
     public void addUser(UserEntity userEntity){
         usersInTheLocation.add(userEntity);
         userEntity.setLocation(this);

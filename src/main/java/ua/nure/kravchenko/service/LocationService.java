@@ -25,8 +25,8 @@ public class LocationService {
         return locationRepository.save(location);
     }
 
-    public Location findByAdress(String adress) {
-        return locationRepository.findByAdress(adress);
+    public Location findByAddress(String address) {
+        return locationRepository.findByAddress(address);
     }
 
     public List<Location> findAll(int id) {
