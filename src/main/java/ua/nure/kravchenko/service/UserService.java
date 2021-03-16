@@ -41,6 +41,7 @@ public class UserService {
 
     public UserEntity findByLoginAndPassword(String login, String password) {
         UserEntity userEntity = findByLogin(login);
+        System.out.println(userEntity.getPassword());
         if (userEntity != null) {
             if (passwordEncoder.matches(password, userEntity.getPassword())) {
                 return userEntity;

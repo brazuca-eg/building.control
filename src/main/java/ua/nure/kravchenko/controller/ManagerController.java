@@ -25,6 +25,16 @@ public class ManagerController {
         return users;
     }
 
+    @PostMapping("/users/{id}")
+    public UserEntity setLocationToUser(@PathVariable int id, @RequestBody LocationFindAdressReq adress){
+        Location location = locationService.findByAdress(adress.getAdress());
+        UserEntity user = userService.findById(id).get();
+        if(user!=null && location!=null){
+            user.setLocation(location);
+        }
+        return userService.updateUser(user);
+    }
+
     @PostMapping("/location/create")
     public Location createLocation(@RequestBody LocationRequest location){
         Location loc = new Location();
@@ -37,26 +47,16 @@ public class ManagerController {
     public Location getLocation(@PathVariable int id){
         List<Location> loc = locationService.findAllById(id);
         Location location = new Location();
-        if(loc.size()>0){
+        if(!loc.isEmpty()){
             location = loc.get(0);
         }
         return location;
     }
 
-    @PostMapping("/users/{id}")
-    public UserEntity setLocationToUser(@PathVariable int id, @RequestBody LocationFindAdressReq adress){
-        Location location = locationService.findByAdress(adress.getAdress());
-        UserEntity user = userService.findById(id).get();
-        if(user!=null && location!=null){
-            user.setLocation(location);
-        }
-        return userService.updateUser(user);
-    }
-
     @GetMapping("/statistics/{id}")
-    public Statistic getDailyStatisticks(@PathVariable int id){
+    public Statistic getDailyStatistics(@PathVariable int id){
         List<Location> locationList = locationService.findAllById(id);
         Location location = locationList.get(0);
-        return locationService.getDailyStatisticks(location);
+        return locationService.getDailyStatistics(location);
     }
 }

@@ -33,7 +33,7 @@ public class LocationService {
         return locationRepository.findAllById(id);
     }
 
-    public Statistic getDailyStatisticks(Location location){
+    public Statistic getDailyStatistics(Location location){
         List<Detail> locationDetails = location.getLocationDetails();
         Statistic statistic = new Statistic();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -57,8 +57,8 @@ public class LocationService {
             }
         }
         statistic.setLocation(location);
-        statistic.setMarkAverage(markAverage);
-        statistic.setParametersAverage(parametersAverage);
+        statistic.setMarkAverage(markAverage/count);
+        statistic.setParametersAverage(parametersAverage/count);
         statistic.setDate(timestamp);
         return statistic;
     }

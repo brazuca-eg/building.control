@@ -27,4 +27,9 @@ public class UserEntity {
     @JoinColumn (name="location_id")
     @JsonBackReference
     private Location location;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "balance_id", referencedColumnName = "id")
+    @JsonBackReference
+    private Balance balance;
 }
