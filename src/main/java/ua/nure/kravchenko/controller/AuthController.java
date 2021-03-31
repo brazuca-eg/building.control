@@ -2,10 +2,10 @@ package ua.nure.kravchenko.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import ua.nure.kravchenko.config.jwt.JwtProvider;
-import ua.nure.kravchenko.controller.requests_params.AuthRequest;
-import ua.nure.kravchenko.controller.requests_params.AuthResponse;
-import ua.nure.kravchenko.controller.requests_params.RegistrationRequest;
+import ua.nure.kravchenko.requests_params.LoginRequest;
+import ua.nure.kravchenko.requests_params.RegistrationRequest;
 import ua.nure.kravchenko.entity.UserEntity;
+import ua.nure.kravchenko.entity.dto.UserDTO;
 import ua.nure.kravchenko.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,24 +17,32 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+    private final UserService userService;
+    private final JwtProvider jwtProvider;
+
     @Autowired
-    private UserService userService;
-    @Autowired
-    private JwtProvider jwtProvider;
+    public AuthController(UserService userService, JwtProvider jwtProvider) {
+        this.userService = userService;
+        this.jwtProvider = jwtProvider;
+    }
 
     @PostMapping("/register")
-    public UserEntity registerUser(@RequestBody @Valid RegistrationRequest registrationRequest) {
+    public UserDTO registerUser(@RequestBody @Valid RegistrationRequest registrationRequest) {
         UserEntity user = new UserEntity();
         user.setPassword(registrationRequest.getPassword());
         user.setLogin(registrationRequest.getLogin());
+        user.setName(registrationRequest.getName());
+        user.setSurname(registrationRequest.getSurname());
         userService.saveUser(user);
-        return user;
+        return new UserDTO(user);
     }
 
     @PostMapping("/login")
-    public AuthResponse auth(@RequestBody AuthRequest request) {
+    public UserDTO login(@RequestBody LoginRequest request) {
         UserEntity userEntity = userService.findByLoginAndPassword(request.getLogin(), request.getPassword());
         String token = jwtProvider.generateToken(userEntity.getLogin());
-        return new AuthResponse(token);
+        UserDTO userDTO = new UserDTO(userEntity);
+        userDTO.setToken(token);
+        return  userDTO;
     }
 }

@@ -12,6 +12,8 @@ public class Balance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column
+    private double salary;
+    @Column
     private int card;
     @Column
     private double balance;

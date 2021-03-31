@@ -30,7 +30,6 @@ public class Location {
     @JsonManagedReference
     private List<UserEntity> usersInTheLocation;
 
-
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
     private List<Detail> locationDetails;
@@ -43,10 +42,5 @@ public class Location {
         this.floor = floor;
         this.room = room;
         this.square = square;
-    }
-
-    public void addUser(UserEntity userEntity){
-        usersInTheLocation.add(userEntity);
-        userEntity.setLocation(this);
     }
 }

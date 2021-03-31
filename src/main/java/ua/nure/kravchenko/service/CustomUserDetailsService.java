@@ -1,7 +1,7 @@
-package ua.nure.kravchenko.config;
+package ua.nure.kravchenko.service;
 
+import ua.nure.kravchenko.config.CustomUserDetails;
 import ua.nure.kravchenko.entity.UserEntity;
-import ua.nure.kravchenko.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

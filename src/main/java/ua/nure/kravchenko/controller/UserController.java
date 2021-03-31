@@ -2,7 +2,7 @@ package ua.nure.kravchenko.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ua.nure.kravchenko.controller.requests_params.NewCardRequest;
+import ua.nure.kravchenko.requests_params.NewCardRequest;
 import ua.nure.kravchenko.entity.Balance;
 import ua.nure.kravchenko.entity.Location;
 import ua.nure.kravchenko.entity.UserEntity;
@@ -11,48 +11,50 @@ import ua.nure.kravchenko.service.BalanceService;
 import ua.nure.kravchenko.service.LocationService;
 import ua.nure.kravchenko.service.UserService;
 
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    private final UserService userService;
+    private final LocationService locationService;
+    private final BalanceService balanceService;
+
     @Autowired
-    private UserService userService;
-    @Autowired
-    private LocationService locationService;
-    @Autowired
-    private BalanceService balanceService;
+    public UserController(UserService userService, LocationService locationService, BalanceService balanceService) {
+        this.userService = userService;
+        this.locationService = locationService;
+        this.balanceService = balanceService;
+    }
 
     @GetMapping("/location/{id}")
     public Location getLocation(@PathVariable int id){
-        Optional<UserEntity> userEntity = userService.findById(id);
-        UserEntity user = userEntity.get();
-        return user.getLocation();
+        UserEntity user = userService.findById(id);
+        if(!user.equals(new UserEntity())){
+            return user.getLocation();
+        }
+        return new Location();
     }
 
     @PostMapping("/card/{id}")
     public Balance createBalanceCard(@PathVariable int id, @RequestBody NewCardRequest newCardRequest){
-        Optional<UserEntity> userEntity = userService.findById(id);
-        UserEntity user = userEntity.get();
+        UserEntity user = userService.findById(id);
         Balance balance = new Balance();
+        balance.setSalary(newCardRequest.getSalary());
         balance.setBalance(newCardRequest.getBalance());
         balance.setCard(newCardRequest.getCard());
         balance.setUser(user);
         user.setBalance(balance);
         userService.saveUser(user);
-        return balance;
+        return user.getBalance();
     }
 
     @PostMapping("/request/{id}")
     public Balance makeDailRequest(@PathVariable int id){
-        Optional<UserEntity> userEntity = userService.findById(id);
-        UserEntity user = userEntity.get();
+        UserEntity user =  userService.findById(id);
         Statistic statistic = locationService.getDailyStatistics(user.getLocation());
         Balance balance = user.getBalance();
         balance.setRequest(balance.getRequest() + statistic.getMarkAverage());
         userService.saveUser(user);
         return balance;
     }
-
-
 }

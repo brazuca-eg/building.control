@@ -1,7 +1,7 @@
 package ua.nure.kravchenko.config.jwt;
 
 import ua.nure.kravchenko.config.CustomUserDetails;
-import ua.nure.kravchenko.config.CustomUserDetailsService;
+import ua.nure.kravchenko.service.CustomUserDetailsService;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

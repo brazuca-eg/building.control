@@ -13,5 +13,4 @@ public class BalanceService {
     public Balance save(Balance balance){
         return balanceRepository.save(balance);
     }
-
 }

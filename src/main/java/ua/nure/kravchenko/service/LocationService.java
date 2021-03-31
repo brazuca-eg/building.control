@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LocationService {
@@ -29,8 +30,17 @@ public class LocationService {
         return locationRepository.findByAddress(address);
     }
 
-    public List<Location> findAll(int id) {
-        return locationRepository.findAllById(id);
+    public Location findById(int id) {
+        Location location = new Location();
+        Optional<Location> optional = locationRepository.findById(id);
+        if (optional.isPresent()){
+            location = optional.get();
+        }
+        return location;
+    }
+
+    public List<Location> findAllLocations() {
+        return locationRepository.findAll();
     }
 
     public Statistic getDailyStatistics(Location location){
@@ -56,10 +66,23 @@ public class LocationService {
                 count++;
             }
         }
+        if(count==0){
+            count++;
+        }
         statistic.setLocation(location);
         statistic.setMarkAverage(markAverage/count);
         statistic.setParametersAverage(parametersAverage/count);
         statistic.setDate(timestamp);
         return statistic;
+    }
+
+    public boolean deleteLocation(int id){
+        Optional<Location> optional = locationRepository.findById(id);
+        if (optional.isPresent()){
+            Location location = optional.get();
+            locationRepository.delete(location);
+            return true;
+        }
+        return false;
     }
 }

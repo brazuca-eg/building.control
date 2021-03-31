@@ -1,4 +1,4 @@
-package ua.nure.kravchenko.controller.requests_params;
+package ua.nure.kravchenko.requests_params;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
