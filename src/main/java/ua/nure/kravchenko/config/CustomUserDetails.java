@@ -14,11 +14,11 @@ public class CustomUserDetails implements UserDetails {
     private Collection<? extends GrantedAuthority> grantedAuthorities;
 
     public static CustomUserDetails fromUserEntityToCustomUserDetails(UserEntity userEntity) {
-        CustomUserDetails c = new CustomUserDetails();
-        c.login = userEntity.getLogin();
-        c.password = userEntity.getPassword();
-        c.grantedAuthorities = Collections.singletonList(new SimpleGrantedAuthority(userEntity.getRoleEntity().getName()));
-        return c;
+        CustomUserDetails customUserDetails = new CustomUserDetails();
+        customUserDetails.login = userEntity.getLogin();
+        customUserDetails.password = userEntity.getPassword();
+        customUserDetails.grantedAuthorities = Collections.singletonList(new SimpleGrantedAuthority(userEntity.getRoleEntity().getName()));
+        return customUserDetails;
     }
 
     @Override
