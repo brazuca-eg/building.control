@@ -33,7 +33,7 @@ public class LocationService {
     public Location findById(int id) {
         Location location = new Location();
         Optional<Location> optional = locationRepository.findById(id);
-        if (optional.isPresent()){
+        if (optional.isPresent()) {
             location = optional.get();
         }
         return location;
@@ -43,42 +43,37 @@ public class LocationService {
         return locationRepository.findAll();
     }
 
-    public Statistic getDailyStatistics(Location location){
+    public Statistic getDailyStatistics(Location location) {
         List<Detail> locationDetails = location.getLocationDetails();
         Statistic statistic = new Statistic();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        Date date = timestamp;
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+        calendar.setTime(timestamp);
         double markAverage = 0;
-        double parametersAverage = 0;
         int count = 0;
-        for (int i = 0; i < locationDetails.size(); i++) {
-            Date date1 = locationDetails.get(i).getDatetime();
-            Calendar calendar1 = Calendar.getInstance();
-            calendar1.setTime(date1);
-            if(calendar.get(Calendar.YEAR) == calendar1.get(Calendar.YEAR)
-            && calendar.get(Calendar.MONTH) == calendar1.get(Calendar.MONTH)
-            && calendar.get(Calendar.DAY_OF_MONTH) == calendar1.get(Calendar.DAY_OF_MONTH)){
-                System.out.println(locationDetails.get(i).getMark() + " mark");
-                markAverage+=locationDetails.get(i).getMark();
-                parametersAverage+=locationDetails.get(i).getParameter();
+        for (Detail locationDetail : locationDetails) {
+            Date currDate = locationDetail.getDatetime();
+            Calendar localeCal = Calendar.getInstance();
+            localeCal.setTime(currDate);
+            if (calendar.get(Calendar.YEAR) == localeCal.get(Calendar.YEAR)
+                    && calendar.get(Calendar.MONTH) == localeCal.get(Calendar.MONTH)
+                    && calendar.get(Calendar.DAY_OF_MONTH) == localeCal.get(Calendar.DAY_OF_MONTH)) {
+                markAverage += locationDetail.getMark();
                 count++;
             }
         }
-        if(count==0){
+        if (count == 0) {
             count++;
         }
         statistic.setLocation(location);
-        statistic.setMarkAverage(markAverage/count);
-        statistic.setParametersAverage(parametersAverage/count);
+        statistic.setMarkAverage(markAverage / count);
         statistic.setDate(timestamp);
         return statistic;
     }
 
-    public boolean deleteLocation(int id){
+    public boolean deleteLocation(int id) {
         Optional<Location> optional = locationRepository.findById(id);
-        if (optional.isPresent()){
+        if (optional.isPresent()) {
             Location location = optional.get();
             locationRepository.delete(location);
             return true;

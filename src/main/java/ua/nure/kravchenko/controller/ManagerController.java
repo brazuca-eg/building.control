@@ -10,6 +10,7 @@ import ua.nure.kravchenko.entity.UserEntity;
 import ua.nure.kravchenko.entity.dto.UserDTO;
 import ua.nure.kravchenko.entity.project.Roles;
 import ua.nure.kravchenko.entity.project.Statistic;
+import ua.nure.kravchenko.requests_params.NewCardRequest;
 import ua.nure.kravchenko.service.BalanceService;
 import ua.nure.kravchenko.service.LocationService;
 import ua.nure.kravchenko.service.UserService;
@@ -59,16 +60,22 @@ public class ManagerController {
         }
     }
 
-    @PostMapping("/users/{id}/accept")
-    public Balance acceptPaymentRequest(@PathVariable int id) throws Exception {
+    @PostMapping("/card/{id}")
+    public Balance createBalanceCard(@PathVariable int id, @RequestBody NewCardRequest newCardRequest){
         UserEntity user = userService.findById(id);
-        if (user.getBalance() != null) {
-            Balance balance = user.getBalance();
-            balance.setBalance(balance.getBalance() + balance.getRequest());
-            balance.setRequest(0);
-            return balanceService.save(balance);
-        }
-        return new Balance();
+        Balance balance = new Balance();
+        balance.setSalary(newCardRequest.getSalary());
+        balance.setBalance(newCardRequest.getBalance());
+        balance.setCard(newCardRequest.getCard());
+        balance.setUser(user);
+        user.setBalance(balance);
+        userService.saveUser(user);
+        return user.getBalance();
+    }
+
+    @PostMapping("/users/{id}/{id2}/accept")
+    public Balance acceptPaymentRequest(@PathVariable int id, @PathVariable int id2) throws Exception {
+        return userService.acceptPaymentRequest(id, id2);
     }
 
     @PostMapping("/users/{id}/decline")
@@ -107,6 +114,15 @@ public class ManagerController {
         List<Location> locationList = locationService.findAllById(id);
         Location location = locationList.get(0);
         return locationService.getDailyStatistics(location);
+    }
+
+    @GetMapping("/balance/{id}")
+    public Balance getManagerBalance(@PathVariable int id){
+        UserEntity user = userService.findById(id);
+        if(user.getBalance()!=null){
+            return user.getBalance();
+        }
+        return new Balance();
     }
 
     @GetMapping("/users/free")

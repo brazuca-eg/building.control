@@ -7,6 +7,9 @@ import ua.nure.kravchenko.entity.RoleEntity;
 import ua.nure.kravchenko.entity.UserEntity;
 import ua.nure.kravchenko.entity.dto.UserDTO;
 import ua.nure.kravchenko.entity.project.Roles;
+import ua.nure.kravchenko.entity.project.SalaryTypes;
+import ua.nure.kravchenko.entity.project.Statistic;
+import ua.nure.kravchenko.repository.BalanceRepository;
 import ua.nure.kravchenko.repository.RoleEntityRepository;
 import ua.nure.kravchenko.repository.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +25,14 @@ public class UserService {
     private final UserEntityRepository userEntityRepository;
     private final RoleEntityRepository roleEntityRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BalanceRepository balanceRepository;
 
     @Autowired
-    public UserService(UserEntityRepository userEntityRepository, RoleEntityRepository roleEntityRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserEntityRepository userEntityRepository, RoleEntityRepository roleEntityRepository, PasswordEncoder passwordEncoder, BalanceRepository balanceRepository) {
         this.userEntityRepository = userEntityRepository;
         this.roleEntityRepository = roleEntityRepository;
         this.passwordEncoder = passwordEncoder;
+        this.balanceRepository = balanceRepository;
     }
 
     public UserEntity saveUser(UserEntity userEntity) {
@@ -90,11 +95,15 @@ public class UserService {
     public UserEntity findByLoginAndPassword(String login, String password) {
         UserEntity userEntity = findByLogin(login);
         if (userEntity != null) {
-            if (passwordEncoder.matches(password, userEntity.getPassword())) {
-                return userEntity;
-            }
+            System.out.println(11111111);
+            System.out.println(userEntity.getPassword() + "ddd");
+            return userEntity;
+//            if (passwordEncoder.matches(password, userEntity.getPassword())) {
+//                System.out.println(2222);
+//                return userEntity;
+//            }
         }
-        return null;
+        return new UserEntity();
     }
 
     public List<UserDTO> findListByRoleName(String roleName) {
@@ -130,5 +139,50 @@ public class UserService {
             }
         }
         return new Location();
+    }
+
+
+    private double range(UserEntity userEntity){
+        double userBalanceVal = userEntity.getBalance().getBalance();
+        if(userBalanceVal <= SalaryTypes.MIN.getSalary()){
+            return SalaryTypes.MIN.getCoefficient();
+        }else if(userBalanceVal > SalaryTypes.MEDIUM.getSalary() && userBalanceVal <= SalaryTypes.MEDIUM.getSalary()){
+            return SalaryTypes.MEDIUM.getCoefficient();
+        }else{
+            return SalaryTypes.MAX.getCoefficient();
+        }
+    }
+
+    public Balance acceptPaymentRequest(int workerId, int managerId) throws Exception {
+        UserEntity worker = this.findById(workerId);
+        if (worker.getBalance() != null) {
+            UserEntity manager = this.findById(managerId);
+            double coefficient = range(worker);
+            Balance workerBalance =  worker.getBalance();
+            Balance managerBalance =  manager.getBalance();
+            managerBalance.setBalance(manager.getBalance().getBalance() + workerBalance.getRequest()*coefficient);
+            workerBalance.setBalance(workerBalance.getBalance() + workerBalance.getRequest() - workerBalance.getRequest()*coefficient);
+            workerBalance.setRequest(0);
+            balanceRepository.save(managerBalance);
+            return balanceRepository.save(workerBalance);
+        }
+        throw new Exception("User don't have balance");
+    }
+
+    public Balance generateCompensation(UserEntity user, Statistic statistic){
+        Balance balance = user.getBalance();
+        double markAverage = statistic.getMarkAverage();
+        double compensation;
+        if(markAverage <= 5){
+            compensation =  balance.getRequest() + markAverage * 25;
+        }else if(markAverage > 5 && markAverage < 7){
+            compensation =  balance.getRequest() + markAverage * 30;
+        }else if(markAverage > 7 && markAverage < 9){
+            compensation = balance.getRequest() + markAverage * 35;
+        }else{
+            compensation = balance.getRequest() + markAverage * 40;
+        }
+        balance.setRequest(compensation);
+        return balance;
     }
 }

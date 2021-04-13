@@ -9,5 +9,4 @@ public class Statistic {
     private Timestamp date;
     private Location location;
     private double markAverage;
-    private double parametersAverage;
 }

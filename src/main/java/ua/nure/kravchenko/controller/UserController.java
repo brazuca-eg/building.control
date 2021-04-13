@@ -52,8 +52,8 @@ public class UserController {
     public Balance makeDailRequest(@PathVariable int id){
         UserEntity user =  userService.findById(id);
         Statistic statistic = locationService.getDailyStatistics(user.getLocation());
-        Balance balance = user.getBalance();
-        balance.setRequest(balance.getRequest() + statistic.getMarkAverage());
+        Balance balance = userService.generateCompensation(user, statistic);
+        user.setBalance(balance);
         userService.saveUser(user);
         return balance;
     }
