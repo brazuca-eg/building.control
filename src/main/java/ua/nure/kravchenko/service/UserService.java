@@ -6,16 +6,19 @@ import ua.nure.kravchenko.entity.Location;
 import ua.nure.kravchenko.entity.RoleEntity;
 import ua.nure.kravchenko.entity.UserEntity;
 import ua.nure.kravchenko.entity.dto.UserDTO;
+import ua.nure.kravchenko.entity.project.Payment;
 import ua.nure.kravchenko.entity.project.Roles;
 import ua.nure.kravchenko.entity.project.SalaryTypes;
 import ua.nure.kravchenko.entity.project.Statistic;
 import ua.nure.kravchenko.repository.BalanceRepository;
+import ua.nure.kravchenko.repository.PaymentRepository;
 import ua.nure.kravchenko.repository.RoleEntityRepository;
 import ua.nure.kravchenko.repository.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,13 +29,15 @@ public class UserService {
     private final RoleEntityRepository roleEntityRepository;
     private final PasswordEncoder passwordEncoder;
     private final BalanceRepository balanceRepository;
+    private final PaymentRepository paymentRepository;
 
     @Autowired
-    public UserService(UserEntityRepository userEntityRepository, RoleEntityRepository roleEntityRepository, PasswordEncoder passwordEncoder, BalanceRepository balanceRepository) {
+    public UserService(UserEntityRepository userEntityRepository, RoleEntityRepository roleEntityRepository, PasswordEncoder passwordEncoder, BalanceRepository balanceRepository, PaymentRepository paymentRepository) {
         this.userEntityRepository = userEntityRepository;
         this.roleEntityRepository = roleEntityRepository;
         this.passwordEncoder = passwordEncoder;
         this.balanceRepository = balanceRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     public UserEntity saveUser(UserEntity userEntity) {
@@ -160,11 +165,27 @@ public class UserService {
             double coefficient = range(worker);
             Balance workerBalance =  worker.getBalance();
             Balance managerBalance =  manager.getBalance();
+            double sum1 = workerBalance.getRequest()*coefficient;
+            double sum2 = workerBalance.getRequest() - workerBalance.getRequest()*coefficient;
             managerBalance.setBalance(manager.getBalance().getBalance() + workerBalance.getRequest()*coefficient);
             workerBalance.setBalance(workerBalance.getBalance() + workerBalance.getRequest() - workerBalance.getRequest()*coefficient);
             workerBalance.setRequest(0);
             balanceRepository.save(managerBalance);
-            return balanceRepository.save(workerBalance);
+            balanceRepository.save(workerBalance);
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            Payment paymentManager = new Payment();
+            paymentManager.setDate(timestamp);
+            paymentManager.setBalance(managerBalance);
+            paymentManager.setAcceptStatus(true);
+            paymentManager.setMoney(sum1);
+            paymentRepository.save(paymentManager);
+            Payment paymentWorker = new Payment();
+            paymentWorker.setDate(timestamp);
+            paymentWorker.setBalance(workerBalance);
+            paymentWorker.setAcceptStatus(true);
+            paymentWorker.setMoney(sum2);
+            paymentRepository.save(paymentWorker);
+            return workerBalance;
         }
         throw new Exception("User don't have balance");
     }
@@ -185,4 +206,6 @@ public class UserService {
         balance.setRequest(compensation);
         return balance;
     }
+
+
 }

@@ -2,6 +2,7 @@ package ua.nure.kravchenko.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ua.nure.kravchenko.entity.project.Payment;
 import ua.nure.kravchenko.requests_params.LocationFindAdressReq;
 import ua.nure.kravchenko.requests_params.LocationRequest;
 import ua.nure.kravchenko.entity.Balance;
@@ -13,8 +14,10 @@ import ua.nure.kravchenko.entity.project.Statistic;
 import ua.nure.kravchenko.requests_params.NewCardRequest;
 import ua.nure.kravchenko.service.BalanceService;
 import ua.nure.kravchenko.service.LocationService;
+import ua.nure.kravchenko.service.PaymentService;
 import ua.nure.kravchenko.service.UserService;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,12 +27,14 @@ public class ManagerController {
     private final UserService userService;
     private final LocationService locationService;
     private final BalanceService balanceService;
+    private final PaymentService paymentService;
 
     @Autowired
-    public ManagerController(UserService userService, LocationService locationService, BalanceService balanceService) {
+    public ManagerController(UserService userService, LocationService locationService, BalanceService balanceService, PaymentService paymentService) {
         this.userService = userService;
         this.locationService = locationService;
         this.balanceService = balanceService;
+        this.paymentService = paymentService;
     }
 
     @GetMapping("/users")
@@ -82,6 +87,13 @@ public class ManagerController {
     public Balance declinePaymentRequest(@PathVariable int id) {
         UserEntity user = userService.findById(id);
         if (userService.checkBalanceExist(user)) {
+            Payment paymentWorker = new Payment();
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            paymentWorker.setDate(timestamp);
+            paymentWorker.setBalance(user.getBalance());
+            paymentWorker.setAcceptStatus(false);
+            paymentWorker.setMoney(user.getBalance().getRequest());
+            paymentService.save(paymentWorker);
             return balanceService.save(user.getBalance());
         }
         return new Balance();
@@ -136,4 +148,12 @@ public class ManagerController {
         UserEntity userEntity = userService.deleteUserLocation(id);
         return new UserDTO(userEntity);
     }
+
+
+
+//    @PatchMapping("/edit")
+//    public UserDTO editProfile(@PathVariable int id) throws Exception {
+//        UserEntity userEntity = userService.deleteUserLocation(id);
+//        return new UserDTO(userEntity);
+//    }
 }
