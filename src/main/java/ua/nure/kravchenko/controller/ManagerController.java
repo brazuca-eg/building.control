@@ -149,6 +149,12 @@ public class ManagerController {
         return new UserDTO(userEntity);
     }
 
+    @GetMapping("/balance/payments/{id}")
+    public List<Payment> getPayments(@PathVariable int id){
+        UserEntity user = userService.findById(id);
+        return user.getBalance().getPayments();
+    }
+
 
 
 //    @PatchMapping("/edit")

@@ -2,6 +2,9 @@ package ua.nure.kravchenko.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ua.nure.kravchenko.entity.dto.UserDTO;
+import ua.nure.kravchenko.entity.project.Payment;
+import ua.nure.kravchenko.requests_params.ChangeParams;
 import ua.nure.kravchenko.requests_params.NewCardRequest;
 import ua.nure.kravchenko.entity.Balance;
 import ua.nure.kravchenko.entity.Location;
@@ -10,6 +13,8 @@ import ua.nure.kravchenko.entity.project.Statistic;
 import ua.nure.kravchenko.service.BalanceService;
 import ua.nure.kravchenko.service.LocationService;
 import ua.nure.kravchenko.service.UserService;
+
+import java.util.List;
 
 
 @RestController
@@ -35,6 +40,13 @@ public class UserController {
         return new Location();
     }
 
+    @GetMapping("/payments/{id}")
+    public List<Payment> getPayments(@PathVariable int id){
+        UserEntity user = userService.findById(id);
+        List<Payment> payments = user.getBalance().getPayments();
+        return payments;
+    }
+
     @PostMapping("/card/{id}")
     public Balance createBalanceCard(@PathVariable int id, @RequestBody NewCardRequest newCardRequest){
         UserEntity user = userService.findById(id);
@@ -56,5 +68,16 @@ public class UserController {
         user.setBalance(balance);
         userService.saveUser(user);
         return balance;
+    }
+
+    @PatchMapping("/change/{id}")
+    public UserDTO changeProfile(@PathVariable int id, @RequestBody ChangeParams changeParams){
+        UserEntity user =  userService.findById(id);
+        user.setName(changeParams.getName());
+        user.setSurname(changeParams.getSurname());
+        user.setPassword(changeParams.getPassword());
+        user.setLogin(changeParams.getLogin());
+        userService.saveUser(user);
+        return new UserDTO(user);
     }
 }
